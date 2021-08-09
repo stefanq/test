@@ -21,6 +21,10 @@ std::string intentToString( const Intent& i ) {
 	return "ERROR";
 };
 
+std::string formatIntent( const Intent& i ) {
+	return std::string("Intent: ") + intentToString( i );
+}
+
 //================================================
 
 const std::map<Intent, std::vector<std::string>> SimpleNlp::s_keywords {
@@ -108,7 +112,6 @@ std::vector<std::string> SimpleNlp::tokenize( std::string sentence ) const {
 
 //================================================
 
-#if false
 #define CONFIG_CATCH_MAIN
 #include "catch.hpp"
 
@@ -139,4 +142,3 @@ TEST_CASE("IntentsTest" ) {
 		REQUIRE( formatIntent( i ) == std::string( "Intent: Find Hotel in City" ) );
 	}
 }
-#endif

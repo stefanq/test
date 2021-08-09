@@ -13,6 +13,7 @@ enum class Intent {
 };
 
 std::string intentToString( const Intent& );
+std::string formatIntent( const Intent& );
 
 /**
  * A class for very basic natural language processing. The API of this class
@@ -30,6 +31,7 @@ public:
 	static const std::map<Intent, std::vector<std::string>> s_keywords;
 
 	Intent guessIntent( const std::string& request ) const;
+	std::string formatIntent( const Intent& ) const;
 
 private:
 	std::vector<std::string> tokenize( std::string ) const;
