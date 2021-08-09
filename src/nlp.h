@@ -33,5 +33,6 @@ public:
 
 private:
 	std::vector<std::string> tokenize( std::string ) const;
-	bool matchIntent( const Intent&, const std::vector<std::string>& ) const;
+	bool matchBasicIntent( const Intent&, const std::vector<std::string>& ) const;
+	Intent matchHigherOrderIntent( Intent a, Intent b ) const;
 };

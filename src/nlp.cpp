@@ -38,7 +38,7 @@ Intent SimpleNlp::guessIntent( const std::string& request ) const {
 
 	std::vector<Intent> candidates;
 	for ( const auto& [intent, hotwords] : s_keywords ) {
-		if ( matchIntent( intent, input ) )
+		if ( matchBasicIntent( intent, input ) )
 			candidates.push_back( intent );
 	}
 
@@ -50,14 +50,16 @@ Intent SimpleNlp::guessIntent( const std::string& request ) const {
 	/**
 	 * The candidates vector represents (multiple) 'basic intents' found.
 	 * These have to be reduced to a 'higher order intent'.
-	 *
-	 * \todo Combine the found intents in vector candidates to higher
-	 * level intents.
+	 * Currently, only the combination of two basic intents is supported.
 	 */
-	return Intent::None;
+	const Intent intent = matchHigherOrderIntent( candidates[0], candidates[1] );
+	if ( intent != Intent::None )
+		return intent;
+	else
+		return candidates[ 0 ];
 }
 
-bool SimpleNlp::matchIntent( const Intent& intent, const std::vector<std::string>& words ) const {
+bool SimpleNlp::matchBasicIntent( const Intent& intent, const std::vector<std::string>& words ) const {
 	for ( const auto& hotword : s_keywords.at( intent ) ) {
 		auto it = std::find( words.begin(), words.end(), hotword );
 		if ( it != words.end() ) {
@@ -65,6 +67,24 @@ bool SimpleNlp::matchIntent( const Intent& intent, const std::vector<std::string
 		}
 	}
 	return false;
+}
+
+/**
+ * This method combines found basic intents to one higher order intent.
+ * \return Intent::None if not matching higher order intent is defined;
+ */
+Intent SimpleNlp::matchHigherOrderIntent( Intent a, Intent b ) const {
+	if ( a > b )
+		std::swap( a, b );
+	if ( a == Intent::City ) {
+		switch ( b ) {
+		case Intent::Weather: return Intent::WeatherInCity;
+		case Intent::Hotel: return Intent::HotelInCity;
+		case Intent::PlaceToVisit: return Intent::PlaceToVisitInCity;
+		case Intent::Fact: return Intent::FactAboutCity;
+		}
+	}
+	return Intent::None;
 }
 
 /**
